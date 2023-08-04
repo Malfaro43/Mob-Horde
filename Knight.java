@@ -212,14 +212,14 @@ public class Knight {
 
   public void moveY(double amount)
   {
-    if ((x>-200 && x<230 && y+amount>205 && y+amount<350) || (x>180 && x<240 && y+amount<260 && y+amount>90) || (x>240 && x<440 && y+amount<260 && y+amount>45) || (x>430 && x<480 && y+amount<280 && y+amount>45) || (x>570 && x<620 && y+amount<280 && y+amount>45) || (x>610 && x<860 && y+amount<260 && y+amount>45) || (x>800 && y+amount<100) || (!(y+amount>-50 && y+amount<600))){
+    if ((x>-200 && x<230 && y+amount>205 && y+amount<350) || (x>180 && x<240 && y+amount<260 && y+amount>90) || (x>240 && x<440 && y+amount<260 && y+amount>45) || (x>430 && x<480 && y+amount<280 && y+amount>45) || (x>570 && x<620 && y+amount<280 && y+amount>45) || (x>610 && x<860 && y+amount<260 && y+amount>-30) || (x>800 && y+amount<100) || (!(y+amount>-100 && y+amount<600))){
     
     }
     else {y+=amount;}
   }
 
   public void moveX(double amount) {
-    if ((x+amount>-200 && x+amount<=230 && y>205 && y<350) || (x+amount>180 && x+amount<260 && y<260 && y>90) || (x+amount>240 && x+amount<440 && y<260 && y>45) || (x+amount>430 && x+amount<480 && y<280 && y>45) || (x+amount>570 && x+amount<620 && y<280 && y>45) || (x+amount>610 && x+amount<860 && y<260 && y>45) || (x+amount>800 && y<100) || (!(x+amount>-75 && x+amount<935))) {
+    if ((x+amount>-200 && x+amount<=230 && y>205 && y<350) || (x+amount>180 && x+amount<260 && y<260 && y>90) || (x+amount>240 && x+amount<440 && y<260 && y>45) || (x+amount>430 && x+amount<480 && y<280 && y>45) || (x+amount>570 && x+amount<620 && y<280 && y>45) || (x+amount>610 && x+amount<860 && y<260 && y>-30) || (x+amount>800 && y<100) || (!(x+amount>-75 && x+amount<960))) {
 
     }
     else {x+=amount;}

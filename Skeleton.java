@@ -29,6 +29,7 @@ public class Skeleton {
     double xSpeed = 0;
     double ySpeed = 0;
     int health;
+    int attackSpeed = 5;
     int state = 0;
     boolean flipped = false;
 
@@ -48,8 +49,9 @@ public class Skeleton {
     Image[] damagedImagesFlipped = new Image[3];
     Image[] deathImagesFlipped = new Image[13];
   
-  public Skeleton(int amount) {
+  public Skeleton(int amount, int speed) {
     health = amount;
+    attackSpeed = speed;
     spawnGen();
     for (int i = 0; i < 12; i++) {
       idleImages[i] = spriteSheet.getSubimage(0+i*64, 128, 64, 64).getScaledInstance(170, 170, Image.SCALE_DEFAULT);
@@ -146,7 +148,7 @@ public class Skeleton {
 
   public void attackAnimate() {
     attackFrameCount++;
-    if (attackFrameCount == 5) {
+    if (attackFrameCount == attackSpeed) {
       attackCurrent++;
       if (attackCurrent>12) {
           attackCurrent = 0;
@@ -181,12 +183,12 @@ public class Skeleton {
   }
   public void checkAttack(int x, int y) {
     if (!flipped) {
-      if (x <= xPos+90 && x >= xPos-50 && y <= yPos && y+120 >= yPos) {
+      if (x <= xPos+140 && x >= xPos && y <= yPos+30 && y+120 >= yPos) {
         state = 1;
       }
     }
     else {
-      if (x >= xPos-150 && x <= xPos && y <= yPos && y+120 >= yPos) {
+      if (x >= xPos-140 && x <= xPos && y <= yPos+30 && y+120 >= yPos) {
         state = 1;
       }
     }
@@ -194,14 +196,14 @@ public class Skeleton {
 
   public void checkIfAttacked(int x, int y, int count, int frame, boolean flipped) {
     if (!flipped) {
-      if (xPos <= x+150 && xPos >= x && yPos <= y+180 && yPos >= y+30 && count == 8 && frame == 0) {
+      if (xPos <= x+150 && xPos >= x && yPos <= y+110 && yPos >= y-10 && count == 8 && frame == 0) {
         state = 2;
         health = health - 5;
         System.out.println(health);
       }
     }
     else {
-      if (xPos >= x-150 && xPos <= x && yPos <= y+180 && yPos >= y+30 && count == 8 && frame == 0) {
+      if (xPos >= x-150 && xPos <= x && yPos <= y+110 && yPos >= y-10 && count == 8 && frame == 0) {
         state = 2;
         health = health - 5;
         System.out.println(health);
@@ -210,7 +212,7 @@ public class Skeleton {
   }
 
   public void checkIfFlip(int x, int y) {
-    if (x >= xPos-220 && x+210 <= xPos+170 && yPos <= y+180 && yPos >= y+30) {
+    if (x >= xPos-220 && x+40 <= xPos && yPos <= y+180 && yPos >= y+30) {
       flipped = true;
     }
     if (x <= xPos+220 && x >= xPos && yPos <= y+180 && yPos >= y+30) {

@@ -1,5 +1,7 @@
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.awt.BorderLayout;
 import javax.swing.JPanel;
 
@@ -12,6 +14,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Scanner;
 
 public class GraphicsMain extends JPanel implements KeyListener
 {
@@ -22,15 +25,39 @@ public class GraphicsMain extends JPanel implements KeyListener
   double ms = 6;
   int numMob = 5;
   int mobHealth = 10;
+  int mobAttackSpeed = 5;
   int mobDead = 0;
-  int level = 0;
+  int level = 1;
+  int highscore;
+  boolean hard = false;
   Font font;
 
   public GraphicsMain() {
-    font = new Font("Arial", Font.BOLD, 20);
-    for (int i = 0; i<numMob; i++) {
-      skeletons.add(new Skeleton(mobHealth));
+    Scanner scan = new Scanner(System.in);
+    System.out.println("Hard? Y or N");
+    hard = scan.nextLine().toLowerCase() == "y";
+    scan.close();
+    if (hard) {
+      numMob = numMob+5;
+      mobHealth = mobHealth+5;
+      mobAttackSpeed = mobAttackSpeed - 3;
     }
+
+    font = new Font("Calibri", Font.BOLD, 20);
+    for (int i = 0; i<numMob; i++) {
+      skeletons.add(new Skeleton(mobHealth, mobAttackSpeed));
+    }
+    try {
+      File myObj = new File("score.txt");
+      Scanner myReader = new Scanner(myObj);
+      while (myReader.hasNextLine()) {
+        highscore = Integer.parseInt(myReader.nextLine());
+      }
+      myReader.close();
+    } catch (FileNotFoundException e) {
+      System.out.println("The score.txt file doesn't appear to be here.");
+      e.printStackTrace();
+    }    
     addKeyListener(this);
     setFocusable(true);
   }
@@ -105,7 +132,7 @@ public class GraphicsMain extends JPanel implements KeyListener
         if (mob.health <= 0 && mob.state != 5) {
           mob.deathAnimate();
           if (mob.state == 5) {
-            hero.health++;
+            //hero.health++; CHANGE 
             mobDead++;
           }
         }
@@ -123,12 +150,12 @@ public class GraphicsMain extends JPanel implements KeyListener
 
           if (mob.state == 1) {
             if (!mob.flipped) {
-              if (hero.x <= mob.xPos+90 && hero.x >= mob.xPos-50 && hero.y <= mob.yPos && hero.y+120 >= mob.yPos && (mob.attackCurrent == 4 || mob.attackCurrent == 8) && mob.attackFrameCount == 0) {
+              if (hero.x <= mob.xPos+140 && hero.x >= mob.xPos && hero.y <= mob.yPos && hero.y+120 >= mob.yPos && (mob.attackCurrent == 4 || mob.attackCurrent == 8) && mob.attackFrameCount == 0) {
                 hero.health--;
                 hero.state = 3;
               }
             }
-            else if (hero.x >= mob.xPos-150 && hero.x <= mob.xPos && hero.y <= mob.yPos && hero.y+120 >= mob.yPos && (mob.attackCurrent == 4 || mob.attackCurrent == 8) && mob.attackFrameCount == 0) {
+            else if (hero.x >= mob.xPos-140 && hero.x <= mob.xPos && hero.y <= mob.yPos && hero.y+120 >= mob.yPos && (mob.attackCurrent == 4 || mob.attackCurrent == 8) && mob.attackFrameCount == 0) {
               hero.health--;
               hero.state = 3;
             }
@@ -147,6 +174,20 @@ public class GraphicsMain extends JPanel implements KeyListener
   }
 
   public void levelUp() {
+    level++;
+    if (level > highscore) {
+      highscore = level;
+        try {
+          File f = new File("score.txt");
+          PrintWriter writer = new PrintWriter(f);
+          writer.println(Integer.toString(highscore));
+          writer.close();
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     Random rand = new Random();
     if (rand.nextInt(2) == 1) {
       mobHealth = mobHealth + 5;
@@ -154,12 +195,12 @@ public class GraphicsMain extends JPanel implements KeyListener
     else {
       numMob = numMob + 2;
     }
+
     mobDead = 0;
     skeletons.clear();
     for (int i = 0; i<numMob; i++) {
-      skeletons.add(new Skeleton(mobHealth));
+      skeletons.add(new Skeleton(mobHealth, mobAttackSpeed));
     }
-    level++;
     hero.x = 520;
     hero.y = 20;
   }
@@ -173,7 +214,8 @@ public class GraphicsMain extends JPanel implements KeyListener
     }
     hero.drawTo(g);
     g.setFont(font);
-    g.drawString("LEVEL: " + Integer.toString(level), 930, 25);
+    g.drawString("LEVEL: " + Integer.toString(level), 880, 25);
+    g.drawString("HIGHSCORE: " + Integer.toString(highscore), 1010, 25);
   }
 
 
@@ -219,7 +261,7 @@ public class GraphicsMain extends JPanel implements KeyListener
       hero.attackFrameCount = 0;
       hero.flipped = true;
     }
-    if(code == KeyEvent.VK_F) {
+    if(code == KeyEvent.VK_SPACE) {
       hero.state = 2;
     }
     if(code == KeyEvent.VK_G && hero.potion > 0) {
